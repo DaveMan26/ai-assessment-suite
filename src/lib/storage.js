@@ -1,38 +1,31 @@
 const STORAGE_KEY = 'ai-assessment-results';
 
 export function saveResults(testId, data) {
-  try {
-    const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    all[testId] = { ...data, savedAt: new Date().toISOString() };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
-  } catch (e) {
-    console.warn('Failed to save results:', e);
-  }
+  const existing = loadAllResults();
+  existing[testId] = { ...data, savedAt: new Date().toISOString() };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
 }
 
 export function loadResults(testId) {
-  try {
-    const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    return all[testId] || null;
-  } catch {
-    return null;
-  }
+  const all = loadAllResults();
+  return all[testId] || null;
 }
 
 export function loadAllResults() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
   }
 }
 
 export function clearResults(testId) {
-  try {
-    const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  if (testId) {
+    const all = loadAllResults();
     delete all[testId];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
-  } catch (e) {
-    console.warn('Failed to clear results:', e);
+  } else {
+    localStorage.removeItem(STORAGE_KEY);
   }
 }

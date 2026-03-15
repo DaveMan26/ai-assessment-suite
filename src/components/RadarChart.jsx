@@ -1,96 +1,60 @@
-import { useMemo } from 'react';
+export default function RadarChart({ scores, dimensions, size = 320 }) {
+  const dims = Object.keys(dimensions);
+  const count = dims.length;
+  if (!count) return null;
 
-const LEVELS = [20, 40, 60, 80, 100];
-
-function polarToCartesian(cx, cy, radius, angleDeg) {
-  const rad = ((angleDeg - 90) * Math.PI) / 180;
-  return {
-    x: cx + radius * Math.cos(rad),
-    y: cy + radius * Math.sin(rad),
-  };
-}
-
-function polygonPoints(cx, cy, radius, count) {
-  const step = 360 / count;
-  return Array.from({ length: count }, (_, i) => {
-    const { x, y } = polarToCartesian(cx, cy, radius, i * step);
-    return `${x},${y}`;
-  }).join(' ');
-}
-
-export default function RadarChart({ dimensions = [], size = 300 }) {
   const cx = size / 2;
   const cy = size / 2;
-  const maxR = size * 0.38;
-  const count = dimensions.length;
-  const step = 360 / count;
-  const labelOffset = size * 0.46;
+  const r = size * 0.38;
+  const angleStep = (2 * Math.PI) / count;
+  const levels = [0.2, 0.4, 0.6, 0.8, 1.0];
+  const accentColor = dimensions[dims[0]]?.color || '#E07A5F';
 
-  const dataPoints = useMemo(() => {
-    if (!count) return '';
-    return dimensions
-      .map((dim, i) => {
-        const r = (dim.score / 100) * maxR;
-        const { x, y } = polarToCartesian(cx, cy, r, i * step);
-        return `${x},${y}`;
-      })
-      .join(' ');
-  }, [dimensions, cx, cy, maxR, count, step]);
+  const getPoint = (i, val) => {
+    const angle = i * angleStep - Math.PI / 2;
+    return { x: cx + r * val * Math.cos(angle), y: cy + r * val * Math.sin(angle) };
+  };
 
-  const accentColor = dimensions[0]?.color || '#E07A5F';
-
-  if (!count) return null;
+  const dataPoints = dims.map((d, i) => getPoint(i, (scores[d] || 0) / 100));
 
   return (
     <svg
       viewBox={`0 0 ${size} ${size}`}
-      className="w-full max-w-xs sm:max-w-sm mx-auto"
-      role="img"
-      aria-label="Radar chart"
+      className="w-full mx-auto block"
+      style={{ maxWidth: size }}
     >
-      {LEVELS.map(level => (
+      {levels.map((l, li) => (
         <polygon
-          key={level}
-          points={polygonPoints(cx, cy, (level / 100) * maxR, count)}
+          key={li}
+          points={dims.map((_, i) => { const p = getPoint(i, l); return `${p.x},${p.y}`; }).join(' ')}
           fill="none"
-          stroke="#ebe8e2"
-          strokeWidth="1"
+          stroke={li === levels.length - 1 ? '#ccc' : '#e8e8e8'}
+          strokeWidth={li === levels.length - 1 ? 1.5 : 0.8}
         />
       ))}
-
-      {dimensions.map((_, i) => {
-        const { x, y } = polarToCartesian(cx, cy, maxR, i * step);
-        return (
-          <line
-            key={i}
-            x1={cx} y1={cy} x2={x} y2={y}
-            stroke="#ebe8e2"
-            strokeWidth="1"
-          />
-        );
+      {dims.map((_, i) => {
+        const p = getPoint(i, 1);
+        return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="#ddd" strokeWidth={0.8} />;
       })}
-
       <polygon
-        points={dataPoints}
-        fill={accentColor}
-        fillOpacity="0.2"
+        points={dataPoints.map(p => `${p.x},${p.y}`).join(' ')}
+        fill={`${accentColor}22`}
         stroke={accentColor}
-        strokeWidth="2"
+        strokeWidth={2.5}
         strokeLinejoin="round"
       />
-
-      {dimensions.map((dim, i) => {
-        const { x, y } = polarToCartesian(cx, cy, labelOffset, i * step);
+      {dataPoints.map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y} r={5} fill={dimensions[dims[i]].color} stroke="#fff" strokeWidth={2} />
+      ))}
+      {dims.map((d, i) => {
+        const p = getPoint(i, 1.22);
         return (
           <text
-            key={dim.name}
-            x={x} y={y}
-            textAnchor="middle"
-            dominantBaseline="central"
-            className="text-[10px] sm:text-xs fill-[#888]"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
+            key={i} x={p.x} y={p.y}
+            textAnchor="middle" dominantBaseline="central"
+            style={{ fontSize: 13, fontWeight: 700, fill: dimensions[d].color, fontFamily: "'DM Sans', sans-serif" }}
           >
-            {dim.name}
+            {dimensions[d].name}
           </text>
         );
       })}

@@ -1,7 +1,8 @@
+import { Link } from 'react-router-dom';
 import { useResults } from '../context/ResultsContext';
 
 const TESTS = [
-  { id: 'big5', name: 'Big Five', icon: '◉', description: 'Osobnostní profil v 5 dimenzích', minutes: 10, accentColor: '#E07A5F' },
+  { id: 'BIG5', name: 'Big Five', icon: '◉', description: 'Osobnostní profil v 5 dimenzích', minutes: 10, accentColor: '#E07A5F', path: '/test/big5' },
   { id: 'iq', name: 'IQ Profil', icon: '⬡', description: 'Kognitivní schopnosti a výkon', minutes: 15, accentColor: '#2D6A9F' },
   { id: 'eq', name: 'Emoční inteligence', icon: '◈', description: 'Vnímání a řízení emocí', minutes: 12, accentColor: '#D4726A' },
   { id: 'creative', name: 'Kreativita', icon: '✦', description: 'Kreativní myšlení a inovace', minutes: 15, accentColor: '#FF6B6B' },
@@ -17,12 +18,18 @@ const TESTS = [
 
 const INTEGRATOR = { id: 'integrator', name: 'Integrátor', icon: '⬣', description: 'Souhrnný profil ze všech testů', accentColor: '#2D2D2D' };
 
-function TestCard({ test, completed }) {
-  return (
+function TestCard({ test, completed, result }) {
+  const hasPath = !!test.path;
+  const avgScore = result?.scores
+    ? Math.round(Object.values(result.scores).reduce((a, b) => a + b, 0) / Object.values(result.scores).length)
+    : null;
+
+  const card = (
     <div
-      className="bg-white rounded-2xl border border-[#ebe8e2] shadow-sm
-                 p-5 flex flex-col gap-3 opacity-80 cursor-default
-                 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+      className={`bg-white rounded-2xl border border-[#ebe8e2] shadow-sm
+                 p-5 flex flex-col gap-3 transition-all duration-200
+                 hover:-translate-y-0.5 hover:shadow-md
+                 ${hasPath ? 'cursor-pointer' : 'opacity-80 cursor-default'}`}
     >
       <div className="flex items-start justify-between">
         <span className="text-3xl leading-none" style={{ color: test.accentColor }}>
@@ -30,7 +37,7 @@ function TestCard({ test, completed }) {
         </span>
         {completed && (
           <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">
-            Dokončeno ✓
+            Dokončeno ✓{avgScore != null && ` · Ø ${avgScore}%`}
           </span>
         )}
       </div>
@@ -47,12 +54,23 @@ function TestCard({ test, completed }) {
         <span className="font-mono text-xs text-[#888]">
           {test.minutes} min
         </span>
-        <span className="text-xs text-[#bbb] italic">
-          Připravuje se
-        </span>
+        {hasPath ? (
+          <span className="text-xs font-medium" style={{ color: test.accentColor }}>
+            {completed ? 'Znovu →' : 'Spustit →'}
+          </span>
+        ) : (
+          <span className="text-xs text-[#bbb] italic">
+            Připravuje se
+          </span>
+        )}
       </div>
     </div>
   );
+
+  if (hasPath) {
+    return <Link to={test.path} className="no-underline">{card}</Link>;
+  }
+  return card;
 }
 
 function IntegratorCard({ completed, completedCount }) {
@@ -91,7 +109,7 @@ function IntegratorCard({ completed, completedCount }) {
 }
 
 export default function Home() {
-  const { completedTests } = useResults();
+  const { completedTests, getTestResult } = useResults();
   const completedCount = completedTests.filter(id => id !== 'integrator').length;
 
   return (
@@ -115,6 +133,7 @@ export default function Home() {
             key={test.id}
             test={test}
             completed={completedTests.includes(test.id)}
+            result={getTestResult(test.id)}
           />
         ))}
 

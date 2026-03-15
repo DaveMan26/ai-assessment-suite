@@ -1,23 +1,23 @@
 /**
  * Spočítá skóre škálových položek per dimenze.
- * @param {Object} answers - { questionId: value (1-7) }
- * @param {Array} items - SCALE_ITEMS array
+ * @param {Array} answers - index-based array of values (1-7)
+ * @param {Array} questions - ordered questions array (may be shuffled)
+ * @param {Object} dimensions - DIMENSIONS object { DIM_KEY: { ... } }
  * @returns {Object} - { DIM_KEY: percentile (0-100) }
  */
-export function calculateScaleScores(answers, items) {
-  const sums = {};
-  const counts = {};
-  items.forEach(item => {
-    const raw = answers[item.id];
-    if (raw == null) return;
-    const base = (raw - 1) / 6;
-    const val = item.reverse ? (1 - base) : base;
-    sums[item.dim] = (sums[item.dim] || 0) + val;
-    counts[item.dim] = (counts[item.dim] || 0) + 1;
-  });
+export function calculateScaleScores(answers, questions, dimensions) {
   const scores = {};
-  Object.keys(sums).forEach(dim => {
-    scores[dim] = (sums[dim] / counts[dim]) * 100;
+  Object.keys(dimensions).forEach(dim => {
+    const dimQuestions = questions
+      .map((q, i) => ({ ...q, idx: i }))
+      .filter(q => q.dim === dim);
+    const vals = dimQuestions.map(q => {
+      const raw = answers[q.idx] || 4;
+      return q.reverse ? (8 - raw) : raw;
+    });
+    if (vals.length === 0) { scores[dim] = 0; return; }
+    const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+    scores[dim] = ((avg - 1) / 6) * 100;
   });
   return scores;
 }
@@ -55,8 +55,6 @@ export function calculateScenarioScores(selectedOptions, scenarios) {
 
 /**
  * Sloučí škálové a scénářové skóre.
- * @param {number} scaleWeight - default 0.7
- * @param {number} scenarioWeight - default 0.3
  */
 export function mergeScores(scaleScores, scenarioScores, scaleWeight = 0.7, scenarioWeight = 0.3) {
   const merged = {};
