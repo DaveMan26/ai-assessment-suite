@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { ResultsProvider } from './context/ResultsContext';
 import Home from './pages/Home';
 import Big5Test from './tests/big5/Big5Test';
+import IqTest from './tests/iq/IqTest';
 
 export default function App() {
   return (
@@ -9,6 +10,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/test/big5" element={<Big5Test />} />
+        <Route path="/test/iq" element={<IqTest />} />
       </Routes>
     </ResultsProvider>
   );
