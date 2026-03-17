@@ -35,19 +35,12 @@ export default function SliderQuestion({
           step={1}
           value={displayValue}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full h-2 rounded-full appearance-none cursor-pointer
-                     [&::-webkit-slider-thumb]:appearance-none
-                     [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6
-                     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2
-                     [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md
-                     [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6
-                     [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2
-                     [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md"
+          className="assessment-slider"
           style={{
+            '--slider-color': accentColor,
             background: isSelected
               ? `linear-gradient(90deg, ${accentColor} 0%, ${accentColor}44 100%)`
               : '#f0ede8',
-            '--thumb-bg': accentColor,
           }}
         />
       </div>

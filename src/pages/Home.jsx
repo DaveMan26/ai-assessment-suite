@@ -4,7 +4,7 @@ import { useResults } from '../context/ResultsContext';
 const TESTS = [
   { id: 'BIG5', name: 'Big Five', icon: '◉', description: 'Osobnostní profil v 5 dimenzích', minutes: 10, accentColor: '#E07A5F', path: '/test/big5' },
   { id: 'IQ', name: 'IQ Test', icon: '◈', description: 'Kognitivní schopnosti — 6 dimenzí', minutes: 20, accentColor: '#2D6A9F', path: '/test/iq' },
-  { id: 'eq', name: 'Emoční inteligence', icon: '◈', description: 'Vnímání a řízení emocí', minutes: 12, accentColor: '#D4726A' },
+  { id: 'EQ', name: 'Emoční inteligence', icon: '♡', description: 'Vnímání a řízení emocí — 5 dimenzí EQ', minutes: 15, accentColor: '#D4726A', path: '/test/eq' },
   { id: 'creative', name: 'Kreativita', icon: '✦', description: 'Kreativní myšlení a inovace', minutes: 15, accentColor: '#FF6B6B' },
   { id: 'strengths', name: 'Silné stránky', icon: '◆', description: 'Přirozené talenty a síly', minutes: 10, accentColor: '#264653' },
   { id: 'career', name: 'Kariérní kompas', icon: '▲', description: 'Kariérní preference a motivace', minutes: 12, accentColor: '#E07A5F' },
