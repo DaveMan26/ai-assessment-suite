@@ -1,4 +1,4 @@
-export default function RadarChart({ scores, dimensions, size = 320 }) {
+export default function RadarChart({ scores, dimensions, size = 320, referenceValue }) {
   const dims = Object.keys(dimensions);
   const count = dims.length;
   if (!count) return null;
@@ -16,6 +16,7 @@ export default function RadarChart({ scores, dimensions, size = 320 }) {
   };
 
   const dataPoints = dims.map((d, i) => getPoint(i, (scores[d] || 0) / 100));
+  const refLevel = typeof referenceValue === 'number' ? Math.max(0, Math.min(100, referenceValue)) / 100 : null;
 
   return (
     <svg
@@ -32,6 +33,18 @@ export default function RadarChart({ scores, dimensions, size = 320 }) {
           strokeWidth={li === levels.length - 1 ? 1.5 : 0.8}
         />
       ))}
+      {refLevel != null && (
+        <polygon
+          points={dims.map((_, i) => {
+            const p = getPoint(i, refLevel);
+            return `${p.x},${p.y}`;
+          }).join(' ')}
+          fill="none"
+          stroke="#bfbfbf"
+          strokeWidth={1.2}
+          strokeDasharray="4 4"
+        />
+      )}
       {dims.map((_, i) => {
         const p = getPoint(i, 1);
         return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="#ddd" strokeWidth={0.8} />;

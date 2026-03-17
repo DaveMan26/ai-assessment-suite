@@ -4,7 +4,9 @@ import { generateMarkdownReport, generateHTMLReport, downloadFile } from '../lib
 export default function ExportPanel({ testConfig, dimensions, scores, practicalImplications }) {
   const [exported, setExported] = useState({ md: false, html: false });
   const accent = testConfig.accentColor || '#E07A5F';
-  const filePrefix = testConfig.name.toLowerCase().replace(/\s+/g, '-');
+  const filePrefix =
+    testConfig.reportFilePrefix ||
+    (testConfig.id ? String(testConfig.id).toLowerCase() : testConfig.name.toLowerCase().replace(/\s+/g, '-'));
 
   const handleHTML = () => {
     const html = practicalImplications?.fullHtml
