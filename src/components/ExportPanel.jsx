@@ -7,14 +7,18 @@ export default function ExportPanel({ testConfig, dimensions, scores, practicalI
   const filePrefix = testConfig.name.toLowerCase().replace(/\s+/g, '-');
 
   const handleHTML = () => {
-    const html = generateHTMLReport(testConfig, dimensions, scores, practicalImplications?.html || '');
+    const html = practicalImplications?.fullHtml
+      ? practicalImplications.fullHtml
+      : generateHTMLReport(testConfig, dimensions, scores, practicalImplications?.html || '');
     const now = new Date().toISOString().split('T')[0];
     downloadFile(html, `${filePrefix}-report_${now}.html`, 'text/html;charset=utf-8');
     setExported(p => ({ ...p, html: true }));
   };
 
   const handleMarkdown = () => {
-    const md = generateMarkdownReport(testConfig, dimensions, scores, practicalImplications?.markdown || '');
+    const md = practicalImplications?.fullMarkdown
+      ? practicalImplications.fullMarkdown
+      : generateMarkdownReport(testConfig, dimensions, scores, practicalImplications?.markdown || '');
     const now = new Date().toISOString().split('T')[0];
     downloadFile(md, `${filePrefix}-vysledky_${now}.md`, 'text/markdown;charset=utf-8');
     setExported(p => ({ ...p, md: true }));

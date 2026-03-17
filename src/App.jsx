@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Big5Test from './tests/big5/Big5Test';
 import IqTest from './tests/iq/IqTest';
 import EqTest from './tests/eq/EqTest';
+import CreativeTest from './tests/creative/CreativeTest';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/test/big5" element={<Big5Test />} />
         <Route path="/test/iq" element={<IqTest />} />
         <Route path="/test/eq" element={<EqTest />} />
+        <Route path="/test/creative" element={<CreativeTest />} />
       </Routes>
     </ResultsProvider>
   );
