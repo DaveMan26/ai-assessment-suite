@@ -17,6 +17,10 @@ export default function SliderQuestion({
 
   const displayValue = value ?? 4;
   const isSelected = value != null;
+  const selectedLabel =
+    isSelected && Array.isArray(labels) && labels.length >= displayValue
+      ? labels[displayValue - 1]
+      : null;
 
   return (
     <div
@@ -59,16 +63,23 @@ export default function SliderQuestion({
         </div>
       )}
 
-      {isSelected && (
-        <div className="flex justify-center mt-4">
-          <span
-            className="font-mono text-sm px-3 py-1 rounded-full font-medium"
-            style={{ backgroundColor: `${accentColor}18`, color: accentColor }}
+      <div className="text-center mt-6">
+        {isSelected ? (
+          <div
+            className="inline-block rounded-xl px-6 py-2 text-base font-bold"
+            style={{
+              background: `${accentColor}18`,
+              border: `2px solid ${accentColor}`,
+              color: accentColor,
+            }}
           >
             {value}
-          </span>
-        </div>
-      )}
+            {selectedLabel ? ` — ${selectedLabel}` : ''}
+          </div>
+        ) : (
+          <div className="text-[#bbb] text-sm">Posuň slider pro odpověď</div>
+        )}
+      </div>
     </div>
   );
 }
