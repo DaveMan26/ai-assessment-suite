@@ -115,7 +115,7 @@ export default function StrengthsTest() {
     };
 
     saveResults(TEST_CONFIG.id, resultData);
-    saveTestResult('strengths', resultData);
+    saveTestResult('STRENGTHS', resultData);
 
     setTimeout(() => {
       setAnimating(false);

@@ -140,7 +140,7 @@ export default function CareerTest() {
         flat_profile: flat
       };
       saveResults(TEST_CONFIG.id, resultData);
-      saveTestResult('career', resultData);
+      saveTestResult('CAREER', resultData);
       setAnimating(false);
       setPhase('results');
     },

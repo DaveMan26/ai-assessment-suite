@@ -12,12 +12,14 @@ import {
 } from './iqComponents';
 import RadarChart from '../../components/RadarChart';
 import { saveResults } from '../../lib/storage';
+import { useResults } from '../../context/ResultsContext';
 
 const allTasks = { LOGIC: LOGIC_TASKS, VERBAL: VERBAL_TASKS, NUMERICAL: NUMERICAL_TASKS, SPATIAL: SPATIAL_TASKS, MEMORY: MEMORY_TASKS };
 const totalTasks = SECTIONS.reduce((sum, s) => sum + s.taskCount, 0);
 
 export default function IqTest() {
   const navigate = useNavigate();
+  const { saveTestResult } = useResults();
   const [phase, setPhase] = useState("intro");
   const [sectionIdx, setSectionIdx] = useState(0);
   const [taskIdx, setTaskIdx] = useState(0);
@@ -66,7 +68,9 @@ export default function IqTest() {
         if (sectionIdx + 1 >= SECTIONS.length) {
           const result = calculateIqScores(newAnswers, allTasks);
           setScores(result);
-          saveResults('IQ', { scores: result, date: new Date().toISOString() });
+          const payload = { scores: result, date: new Date().toISOString() };
+          saveResults('IQ', payload);
+          saveTestResult('IQ', payload);
           setPhase("results");
         } else {
           setSectionIdx(sectionIdx + 1);
@@ -89,7 +93,9 @@ export default function IqTest() {
       if (sectionIdx + 1 >= SECTIONS.length) {
         const scored = calculateIqScores(newAnswers, allTasks);
         setScores(scored);
-        saveResults('IQ', { scores: scored, date: new Date().toISOString() });
+        const payload = { scores: scored, date: new Date().toISOString() };
+        saveResults('IQ', payload);
+        saveTestResult('IQ', payload);
         setPhase("results");
       } else {
         setSectionIdx(sectionIdx + 1);

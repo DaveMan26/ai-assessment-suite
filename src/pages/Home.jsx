@@ -1,19 +1,21 @@
 import { Link } from 'react-router-dom';
 import { useResults } from '../context/ResultsContext';
+import { TEST_REGISTRY, TOTAL_TEST_SLOTS } from '../integrator/integratorData';
+import { countCompletedIntegratorTests, loadResultForTest } from '../integrator/integratorLogic';
 
 const TESTS = [
   { id: 'BIG5', name: 'Big Five', icon: '◉', description: 'Osobnostní profil v 5 dimenzích', minutes: 10, accentColor: '#E07A5F', path: '/test/big5' },
   { id: 'IQ', name: 'IQ Test', icon: '◈', description: 'Kognitivní schopnosti — 6 dimenzí', minutes: 20, accentColor: '#2D6A9F', path: '/test/iq' },
   { id: 'EQ', name: 'Emoční inteligence', icon: '♡', description: 'Vnímání a řízení emocí — 5 dimenzí EQ', minutes: 15, accentColor: '#D4726A', path: '/test/eq' },
-  { id: 'creative', name: 'Kreativita', icon: '✦', description: 'Kreativní myšlení a inovace', minutes: 15, accentColor: '#FF6B6B', path: '/test/creative' },
-  { id: 'strengths', name: 'Silné stránky', icon: '◆', description: 'Přirozené talenty a síly', minutes: 11, accentColor: '#264653', path: '/test/strengths' },
-  { id: 'career', name: 'Kariérní kompas', icon: '▲', description: 'Kariérní preference a motivace', minutes: 12, accentColor: '#E07A5F', path: '/test/career' },
-  { id: 'cognitive', name: 'Kognitivní styl', icon: '◇', description: 'Jak myslíš a rozhoduješ se', minutes: 10, accentColor: '#3D405B', path: '/test/cognitive' },
-  { id: 'comm', name: 'Komunikační styl', icon: '◎', description: 'Jak komunikuješ s okolím', minutes: 12, accentColor: '#E07A5F' },
-  { id: 'leader', name: 'Leadership', icon: '⬢', description: 'Tvůj styl vedení lidí', minutes: 12, accentColor: '#3D405B' },
-  { id: 'resilience', name: 'Odolnost', icon: '◐', description: 'Psychická odolnost a zvládání stresu', minutes: 10, accentColor: '#81B29A' },
-  { id: 'values', name: 'Hodnoty', icon: '✧', description: 'Hodnotový kompas a motivátory', minutes: 12, accentColor: '#F2CC8F' },
-  { id: 'meta', name: 'Metakognice', icon: '◑', description: 'Sebepoznání a učení se', minutes: 8, accentColor: '#8E7DBE' },
+  { id: 'CREATIVE', name: 'Kreativita', icon: '✦', description: 'Kreativní myšlení a inovace', minutes: 15, accentColor: '#FF6B6B', path: '/test/creative' },
+  { id: 'STRENGTHS', name: 'Silné stránky', icon: '◆', description: 'Přirozené talenty a síly', minutes: 11, accentColor: '#264653', path: '/test/strengths' },
+  { id: 'CAREER', name: 'Kariérní kompas', icon: '▲', description: 'Kariérní preference a motivace', minutes: 12, accentColor: '#E07A5F', path: '/test/career' },
+  { id: 'COGNITIVE', name: 'Kognitivní styl', icon: '◇', description: 'Jak myslíš a rozhoduješ se', minutes: 10, accentColor: '#3D405B', path: '/test/cognitive' },
+  { id: 'COMM', name: 'Komunikační styl', icon: '◎', description: 'Jak komunikuješ s okolím', minutes: 12, accentColor: '#E07A5F' },
+  { id: 'LEADER', name: 'Leadership', icon: '⬢', description: 'Tvůj styl vedení lidí', minutes: 12, accentColor: '#3D405B' },
+  { id: 'RESILIENCE', name: 'Odolnost', icon: '◐', description: 'Psychická odolnost a zvládání stresu', minutes: 10, accentColor: '#81B29A' },
+  { id: 'VALUES', name: 'Hodnoty', icon: '✧', description: 'Hodnotový kompas a motivátory', minutes: 12, accentColor: '#F2CC8F' },
+  { id: 'META', name: 'Metakognice', icon: '◑', description: 'Sebepoznání a učení se', minutes: 8, accentColor: '#8E7DBE' },
 ];
 
 const INTEGRATOR = { id: 'integrator', name: 'Integrátor', icon: '⬣', description: 'Souhrnný profil ze všech testů', accentColor: '#2D2D2D' };
@@ -73,12 +75,13 @@ function TestCard({ test, completed, result }) {
   return card;
 }
 
-function IntegratorCard({ completed, completedCount }) {
+function IntegratorCard({ completedFromStorage }) {
   return (
-    <div
-      className="bg-[#2D2D2D] rounded-2xl border border-[#444] shadow-sm
+    <Link
+      to="/integrator"
+      className="col-span-full no-underline block bg-[#2D2D2D] rounded-2xl border border-[#444] shadow-sm
                  p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center
-                 gap-4 opacity-80 cursor-default col-span-full"
+                 gap-4 hover:opacity-[0.97] transition-opacity cursor-pointer"
     >
       <span className="text-4xl leading-none text-white/80">
         {INTEGRATOR.icon}
@@ -93,24 +96,20 @@ function IntegratorCard({ completed, completedCount }) {
         </p>
       </div>
 
-      <div className="flex items-center gap-3">
-        {completed ? (
-          <span className="text-xs font-medium px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-            Dokončeno ✓
-          </span>
-        ) : (
-          <span className="text-xs text-white/40 italic">
-            Dostupný po dokončení 3+ testů ({completedCount}/3)
-          </span>
-        )}
+      <div className="flex items-center gap-3 flex-wrap">
+        <span className="text-xs font-medium px-3 py-1 rounded-full bg-white/10 text-white border border-white/20 font-mono">
+          {completedFromStorage}/{TOTAL_TEST_SLOTS} testů dokončeno
+        </span>
+        <span className="text-xs font-medium text-emerald-400/90">Otevřít →</span>
       </div>
-    </div>
+    </Link>
   );
 }
 
 export default function Home() {
   const { completedTests, getTestResult } = useResults();
-  const completedCount = completedTests.filter(id => id !== 'integrator').length;
+  const registryIds = Object.keys(TEST_REGISTRY);
+  const completedCount = countCompletedIntegratorTests();
 
   return (
     <div className="max-w-[960px] mx-auto px-4 sm:px-6 py-10 sm:py-16">
@@ -122,25 +121,33 @@ export default function Home() {
           Komplexní sebehodnocení osobnosti, schopností a preferencí
         </p>
         <p className="font-mono text-sm text-[#2D2D2D]">
-          Dokončeno {completedCount} z 12
+          Dokončeno {completedCount} z {TOTAL_TEST_SLOTS} (dostupné testy)
         </p>
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
            style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
-        {TESTS.map(test => (
-          <TestCard
-            key={test.id}
-            test={test}
-            completed={completedTests.includes(test.id)}
-            result={getTestResult(test.id)}
-          />
-        ))}
+        {TESTS.map((test) => {
+          const inReg = registryIds.includes(test.id);
+          const done =
+            inReg && loadResultForTest(test.id) != null
+              ? true
+              : completedTests.includes(test.id);
+          const result =
+            inReg && loadResultForTest(test.id)
+              ? loadResultForTest(test.id)
+              : getTestResult(test.id);
+          return (
+            <TestCard
+              key={test.id}
+              test={test}
+              completed={done}
+              result={result}
+            />
+          );
+        })}
 
-        <IntegratorCard
-          completed={completedTests.includes('integrator')}
-          completedCount={completedCount}
-        />
+        <IntegratorCard completedFromStorage={completedCount} />
       </div>
     </div>
   );

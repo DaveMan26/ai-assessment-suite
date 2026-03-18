@@ -8,6 +8,7 @@ import CreativeTest from './tests/creative/CreativeTest';
 import StrengthsTest from './tests/strengths/StrengthsTest';
 import CareerTest from './tests/career/CareerTest';
 import CognitiveTest from './tests/cognitive/CognitiveTest';
+import Integrator from './integrator/Integrator';
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/test/strengths" element={<StrengthsTest />} />
         <Route path="/test/career" element={<CareerTest />} />
         <Route path="/test/cognitive" element={<CognitiveTest />} />
+        <Route path="/integrator" element={<Integrator />} />
       </Routes>
     </ResultsProvider>
   );

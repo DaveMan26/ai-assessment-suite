@@ -110,7 +110,7 @@ export default function CognitiveTest() {
       };
 
       saveResults(TEST_CONFIG.id, resultData);
-      saveTestResult('cognitive', resultData);
+      saveTestResult('COGNITIVE', resultData);
       setAnimating(false);
       setPhase('results');
     },

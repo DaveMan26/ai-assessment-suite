@@ -122,7 +122,7 @@ export default function CreativeTest() {
       alt_uses_meta: autResult.meta
     };
     saveResults('CREATIVE', resultData);
-    saveTestResult('creative', resultData);
+    saveTestResult('CREATIVE', resultData);
 
     setTimeout(() => setAnimating(false), 600);
     setPhase('results');
