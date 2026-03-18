@@ -8,7 +8,7 @@ const TESTS = [
   { id: 'creative', name: 'Kreativita', icon: '✦', description: 'Kreativní myšlení a inovace', minutes: 15, accentColor: '#FF6B6B', path: '/test/creative' },
   { id: 'strengths', name: 'Silné stránky', icon: '◆', description: 'Přirozené talenty a síly', minutes: 11, accentColor: '#264653', path: '/test/strengths' },
   { id: 'career', name: 'Kariérní kompas', icon: '▲', description: 'Kariérní preference a motivace', minutes: 12, accentColor: '#E07A5F', path: '/test/career' },
-  { id: 'cognitive', name: 'Kognitivní styl', icon: '◇', description: 'Jak myslíš a rozhoduješ se', minutes: 10, accentColor: '#3D405B' },
+  { id: 'cognitive', name: 'Kognitivní styl', icon: '◇', description: 'Jak myslíš a rozhoduješ se', minutes: 10, accentColor: '#3D405B', path: '/test/cognitive' },
   { id: 'comm', name: 'Komunikační styl', icon: '◎', description: 'Jak komunikuješ s okolím', minutes: 12, accentColor: '#E07A5F' },
   { id: 'leader', name: 'Leadership', icon: '⬢', description: 'Tvůj styl vedení lidí', minutes: 12, accentColor: '#3D405B' },
   { id: 'resilience', name: 'Odolnost', icon: '◐', description: 'Psychická odolnost a zvládání stresu', minutes: 10, accentColor: '#81B29A' },
